@@ -1,86 +1,62 @@
-#include <stdio.h>
-#include <limits.h>
+import sys
 
-#define MAX 20
+MAX = 20
+graph = []
+n = 0
 
-int graph[MAX][MAX], n;
+# Function to find minimum distance vertex
+def min_distance(dist, visited):
+    minimum = sys.maxsize
+    min_index = -1
 
-// Function to find minimum distance vertex
-int minDistance(int dist[], int visited[]) {
-    int min = INT_MAX, min_index = -1;
+    for i in range(n):
+        if not visited[i] and dist[i] <= minimum:
+            minimum = dist[i]
+            min_index = i
+    return min_index
 
-    for (int i = 0; i < n; i++) {
-        if (!visited[i] && dist[i] <= min) {
-            min = dist[i];
-            min_index = i;
-        }
-    }
-    return min_index;
-}
+# Function to print path
+def print_path(parent, j):
+    if parent[j] == -1:
+        print(j, end=" ")
+        return
+    print_path(parent, parent[j])
+    print(j, end=" ")
 
-// Function to print path
-void printPath(int parent[], int j) {
-    if (parent[j] == -1) {
-        printf("%d ", j);
-        return;
-    }
-    printPath(parent, parent[j]);
-    printf("%d ", j);
-}
+# Dijkstra Algorithm
+def dijkstra(src, dest):
+    dist = [sys.maxsize] * n
+    visited = [False] * n
+    parent = [-1] * n
 
-// Dijkstra Algorithm
-void dijkstra(int src, int dest) {
-    int dist[MAX], visited[MAX], parent[MAX];
+    dist[src] = 0
 
-    for (int i = 0; i < n; i++) {
-        dist[i] = INT_MAX;
-        visited[i] = 0;
-        parent[i] = -1;
-    }
+    for _ in range(n - 1):
+        u = min_distance(dist, visited)
+        visited[u] = True
 
-    dist[src] = 0;
+        for v in range(n):
+            if (not visited[v] and graph[u][v] != 0 and
+                dist[u] != sys.maxsize and
+                dist[u] + graph[u][v] < dist[v]):
 
-    for (int count = 0; count < n - 1; count++) {
-        int u = minDistance(dist, visited);
-        visited[u] = 1;
+                dist[v] = dist[u] + graph[u][v]
+                parent[v] = u
 
-        for (int v = 0; v < n; v++) {
-            if (!visited[v] && graph[u][v] &&
-                dist[u] != INT_MAX &&
-                dist[u] + graph[u][v] < dist[v]) {
+    print("\nShortest Distance:", dist[dest])
+    print("Path:", end=" ")
+    print_path(parent, dest)
+    print()
 
-                dist[v] = dist[u] + graph[u][v];
-                parent[v] = u;
-            }
-        }
-    }
+# Main program
+n = int(input("Enter number of bus stops: "))
 
-    printf("\nShortest Distance: %d\n", dist[dest]);
-    printf("Path: ");
-    printPath(parent, dest);
-    printf("\n");
-}
+print("\nEnter adjacency matrix (distance between stops):")
+for i in range(n):
+    row = list(map(int, input().split()))
+    graph.append(row)
 
-int main() {
-    int src, dest;
+src = int(input(f"\nEnter source stop (0 to {n - 1}): "))
+dest = int(input(f"Enter destination stop (0 to {n - 1}): "))
 
-    printf("Enter number of bus stops: ");
-    scanf("%d", &n);
-
-    printf("\nEnter adjacency matrix (distance between stops):\n");
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            scanf("%d", &graph[i][j]);
-        }
-    }
-
-    printf("\nEnter source stop (0 to %d): ", n - 1);
-    scanf("%d", &src);
-
-    printf("Enter destination stop (0 to %d): ", n - 1);
-    scanf("%d", &dest);
-
-    dijkstra(src, dest);
-
-    return 0;
-}
+dijkstra(src, dest)
