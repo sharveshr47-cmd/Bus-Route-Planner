@@ -1,28 +1,25 @@
-# 🚌 Bus Route Planner (C)
+# 🚌 Bus Route Planner (Dijkstra Algorithm in Python)
 
-## 📌 Overview
-This project is a simple Bus Route Planner written in C that calculates the shortest path between bus stops using Dijkstra’s Algorithm. It demonstrates how graph-based problems can be solved using basic data structures.
+This project implements a **Bus Route Planner** using **Dijkstra’s Algorithm** to find the shortest path between bus stops.
+
+It is a Python version converted from a C implementation, maintaining the same logic while improving readability and simplicity.
 
 ---
 
 ## 🚀 Features
-- Supports up to 20 bus stops  
-- Uses adjacency matrix to represent routes  
-- Finds shortest distance between two stops  
-- Displays the exact path taken  
-- Simple console-based program  
+
+- Finds the **shortest distance** between two bus stops  
+- Displays the **exact path** taken  
+- Uses **adjacency matrix representation**  
+- Simple command-line interface  
+- Efficient implementation of **Dijkstra’s Algorithm**
 
 ---
 
-## 🧠 Concept Used
-- Graph Representation (Adjacency Matrix)  
-- Shortest Path Algorithm (Dijkstra’s Algorithm)  
-- Arrays and functions in C  
+## 🧠 Algorithm Used
+
+**Dijkstra’s Algorithm** is used to compute the shortest path from a source node to a destination node in a weighted graph.
 
 ---
 
-## 💻 How to Compile & Run
-
-### Compile
-```bash
-gcc bus_route_planner.c -o planner
+## 📂 Project Structure
