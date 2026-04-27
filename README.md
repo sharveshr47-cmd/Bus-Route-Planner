@@ -1,8 +1,8 @@
-# 🚌 Bus Route Planner (Dijkstra Algorithm in Python)
+# 🚌 Bus Route Planner (Dijkstra Algorithm in C)
 
 This project implements a **Bus Route Planner** using **Dijkstra’s Algorithm** to find the shortest path between bus stops.
 
-It is a Python version converted from a C implementation, maintaining the same logic while improving readability and simplicity.
+It is  a C implementation, maintaining the same logic while improving readability and simplicity.
 
 ---
 
