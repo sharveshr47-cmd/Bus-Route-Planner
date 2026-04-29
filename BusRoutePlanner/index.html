@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUS ROUTE PLANNER SYSTEM</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <div class="app-container">
+        <header class="app-header glass-panel">
+            <div class="logo-container">
+                <div class="icon-box">
+                    <i class="fa-solid fa-bus-simple"></i>
+                </div>
+                <div class="title-box">
+                    <h1>BUS ROUTE PLANNER SYSTEM</h1>
+                    <p>Intelligent Transport Navigation & Graph Simulation</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="left-panel">
+                
+                <section class="control-panel glass-panel">
+                    <h2><i class="fa-solid fa-route"></i> Passenger Enquiry</h2>
+                    
+                    <div class="input-group">
+                        <label for="source">Source Bus Stop</label>
+                        <div class="select-wrapper">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <select id="source" required>
+                                <option value="" disabled selected>Select starting stop...</option>
+                                <option value="A">Stop A - Central Station</option>
+                                <option value="B">Stop B - North Square</option>
+                                <option value="C">Stop C - East Valley</option>
+                                <option value="D">Stop D - West End</option>
+                                <option value="E">Stop E - Business District</option>
+                                <option value="F">Stop F - South Park</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="destination">Destination Bus Stop</label>
+                        <div class="select-wrapper">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                            <select id="destination" required>
+                                <option value="" disabled selected>Select destination stop...</option>
+                                <option value="A">Stop A - Central Station</option>
+                                <option value="B">Stop B - North Square</option>
+                                <option value="C">Stop C - East Valley</option>
+                                <option value="D">Stop D - West End</option>
+                                <option value="E">Stop E - Business District</option>
+                                <option value="F">Stop F - South Park</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button id="btn-bfs" class="btn btn-primary" title="Calculate minimum transfers utilizing Breadth-First Search">
+                            <i class="fa-solid fa-stopwatch"></i> Find Minimum Stops (BFS)
+                        </button>
+                        <button id="btn-dijkstra" class="btn btn-secondary" title="Calculate geographical shortest path utilizing Dijkstra Algorithm">
+                            <i class="fa-solid fa-ruler"></i> Find Shortest Distance
+                        </button>
+                    </div>
+                    
+                    <button id="btn-reset" class="btn btn-outline">
+                        <i class="fa-solid fa-rotate-right"></i> Reset Planner
+                    </button>
+                </section>
+
+                <section class="result-card glass-panel" id="result-card">
+                    <div class="result-header">
+                        <h2><i class="fa-solid fa-chart-pie"></i> Navigation Summary</h2>
+                        <span id="route-status" class="status-badge pending">Idle</span>
+                    </div>
+                    
+                    <div class="result-content" id="result-content">
+                        <!-- Default Initial State -->
+                        <div class="empty-state">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                            <p>Select a source and destination stop to generate your route.</p>
+                        </div>
+                        
+                        <!-- System Processing Overlay (Replaces empty state during run) -->
+                        <div class="process-overlay hidden" id="process-overlay">
+                            <div class="spinner-container">
+                                <div class="spinner"></div>
+                            </div>
+                            <div class="process-steps">
+                                <div id="pstep-1" class="step pending"><i class="fa-solid fa-magnifying-glass-location"></i> Stage 1: Network Search</div>
+                                <div id="pstep-2" class="step pending"><i class="fa-solid fa-microchip"></i> Stage 2: Decision Engine</div>
+                                <div id="pstep-3" class="step pending"><i class="fa-solid fa-map-location-dot"></i> Stage 3: Final Output</div>
+                            </div>
+                            <p id="process-text" class="process-text">Initiating navigation system...</p>
+                        </div>
+
+                        <!-- Final Output Data State -->
+                        <div class="data-state hidden">
+                            <div class="details-list">
+                                <div class="info-row">
+                                    <span class="label">Source Stop:</span>
+                                    <span class="value" id="out-source">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Destination Stop:</span>
+                                    <span class="value" id="out-dest">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Algorithm Used:</span>
+                                    <span class="value highlight-text" id="out-algo">-</span>
+                                </div>
+                                <div class="info-row row-col">
+                                    <span class="label mb-2">Traversal Search Order:</span>
+                                    <span class="value text-left text-muted small-text" id="out-traversal">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Alternate Routes Checked:</span>
+                                    <span class="value" id="out-checked">-</span>
+                                </div>
+                                <div class="info-row row-col">
+                                    <span class="label mb-2">Final Optimal Route:</span>
+                                    <div class="path-display" id="out-route"></div>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Total Stops:</span>
+                                    <span class="value" id="out-stops">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Total Distance:</span>
+                                    <span class="value" id="out-dist">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Travel Status:</span>
+                                    <span class="value success-text" id="out-status"><i class="fa-solid fa-circle-check"></i> Route Successfully Generated</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="right-panel">
+                <section class="map-panel glass-panel">
+                    <div class="map-header">
+                        <h2><i class="fa-solid fa-network-wired"></i> Live Bus Network Tracker</h2>
+                    </div>
+                    
+                    <div class="map-container" id="map-container">
+                        <svg id="network-svg" width="100%" height="100%">
+                            <!-- Edges (routes) drawn here -->
+                            <g id="edges-layer"></g>
+                            <!-- Highlighted path drawn here -->
+                            <g id="highlights-layer"></g>
+                            <!-- Nodes (stops) drawn here -->
+                            <g id="nodes-layer"></g>
+                        </svg>
+                        
+                        <div id="bus-icon" class="bus-icon hidden">
+                            <i class="fa-solid fa-bus"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="map-legend">
+                        <div class="legend-item"><span class="color-box" style="background:var(--source-color); box-shadow:0 0 5px var(--source-color);"></span> Source</div>
+                        <div class="legend-item"><span class="color-box" style="background:var(--dest-color); box-shadow:0 0 5px var(--dest-color);"></span> Destination</div>
+                        <div class="legend-item"><span class="color-box" style="background:var(--search-color); box-shadow:0 0 5px var(--search-color);"></span> Searching</div>
+                        <div class="legend-item"><span class="color-box" style="background:var(--final-color); box-shadow:0 0 5px var(--final-color);"></span> Final Optimal Route</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>Developed By <strong>Sharveshwaran R</strong> | Mini Project Data Structures</p>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast hidden">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span id="toast-message">Validation error message</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
